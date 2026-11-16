@@ -5,30 +5,15 @@ struct SplashView: View {
     @State private var scale = 0.8
 
     var body: some View {
-        ZStack {
-            LinearGradient(
-                colors: [.black, Color(white: 0.12)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+        ViewThatFits(in: .vertical) {
+            content
 
-            VStack(spacing: 12) {
-                Image(systemName: "book.closed.fill")
-                    .font(.system(size: 70))
-                    .foregroundStyle(Color.accentText)
-
-                Text("Journali")
-                    .font(.system(size: 42, weight: .black))
-                    .foregroundStyle(.white)
-
-                Text("Your thoughts, your story")
-                    .font(.system(size: 14))
-                    .foregroundStyle(Color.textSecondary)
+            ScrollView {
+                content
             }
-            .scaleEffect(scale)
-            .opacity(opacity)
         }
+        .scaleEffect(scale)
+        .opacity(opacity)
         .onAppear {
             withAnimation(.easeOut(duration: 1.0)) {
                 opacity = 1.0
@@ -36,8 +21,32 @@ struct SplashView: View {
             }
         }
     }
+
+    private var content: some View {
+        VStack {
+            Image("journali-logo")
+                .resizable()
+                .scaledToFit()
+                .containerRelativeFrame(.horizontal) { width, _ in width * 0.25 }
+
+            Text("Journali")
+                .font(.largeTitle)
+                .fontWeight(.black)
+
+            Text("Your thoughts, your story")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
 }
 
 #Preview {
     SplashView()
+        .preferredColorScheme(.dark)
+}
+
+#Preview("Large text") {
+    SplashView()
+        .environment(\.dynamicTypeSize, .accessibility3)
+        .preferredColorScheme(.dark)
 }

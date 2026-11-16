@@ -2,25 +2,43 @@ import SwiftUI
 
 struct EmptyStateView: View {
     var body: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "book.pages.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(Color.accentPrimary)
+        ViewThatFits(in: .vertical) {
+            content
+
+            ScrollView {
+                content
+            }
+        }
+    }
+
+    private var content: some View {
+        VStack {
+            Image("empty-book")
+                .resizable()
+                .scaledToFit()
+                .containerRelativeFrame(.horizontal) { width, _ in width * 0.35 }
 
             Text("Begin Your Journal")
-                .font(.system(size: 24, weight: .bold))
-                .foregroundStyle(Color.accentText)
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundStyle(Color("AccentText"))
 
             Text("Craft your personal diary, tap the plus icon to begin")
-                .font(.system(size: 18, weight: .light))
-                .foregroundStyle(.white)
+                .font(.body)
+                .fontWeight(.light)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
+                .padding(.horizontal)
         }
     }
 }
 
 #Preview {
     EmptyStateView()
+        .preferredColorScheme(.dark)
+}
+
+#Preview("Large text") {
+    EmptyStateView()
+        .environment(\.dynamicTypeSize, .accessibility3)
         .preferredColorScheme(.dark)
 }

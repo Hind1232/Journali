@@ -5,42 +5,38 @@ struct JournalCard: View {
     let onBookmark: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading) {
             HStack {
                 Text(journal.title)
-                    .font(.system(size: 24, weight: .semibold))
-                    .foregroundStyle(Color.accentText)
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(Color("AccentText"))
 
                 Spacer()
 
                 Button(action: onBookmark) {
                     Image(systemName: journal.isBookmarked ? "bookmark.fill" : "bookmark")
-                        .foregroundStyle(Color.accentPrimary)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderless)
             }
 
             Text(journal.date.formatted(date: .numeric, time: .omitted))
-                .font(.system(size: 14))
-                .foregroundStyle(Color.textSecondary)
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
             Text(journal.text)
-                .font(.system(size: 16))
-                .foregroundStyle(.white)
+                .font(.footnote)
                 .lineLimit(4)
         }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.cardSurface)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }
 
 #Preview {
-    JournalCard(
-        journal: Journal(title: "Great Day", text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."),
-        onBookmark: { }
-    )
-    .padding()
-    .background(Color.black)
+    List {
+        JournalCard(
+            journal: Journal(title: "Great Day", text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."),
+            onBookmark: { }
+        )
+    }
+    .preferredColorScheme(.dark)
 }
