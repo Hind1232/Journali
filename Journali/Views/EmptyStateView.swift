@@ -2,16 +2,6 @@ import SwiftUI
 
 struct EmptyStateView: View {
     var body: some View {
-        ViewThatFits(in: .vertical) {
-            content
-
-            ScrollView {
-                content
-            }
-        }
-    }
-
-    private var content: some View {
         VStack {
             Image("empty-book")
                 .resizable()
@@ -32,13 +22,10 @@ struct EmptyStateView: View {
     }
 }
 
-#Preview {
-    EmptyStateView()
-        .preferredColorScheme(.dark)
+#Preview("Dark") {
+    EmptyStateView().preferredColorScheme(.dark)
 }
 
-#Preview("Large text") {
-    EmptyStateView()
-        .environment(\.dynamicTypeSize, .accessibility3)
-        .preferredColorScheme(.dark)
+#Preview("Light") {
+    EmptyStateView().preferredColorScheme(.light)
 }

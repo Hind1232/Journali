@@ -1,61 +1,46 @@
 import SwiftUI
 
-// شاشة وحدة للحالتين: يومية جديدة (journal = nil) أو تعديل
+// One screen for both: a new journal (journal is nil) or editing one
 struct JournalEditorView: View {
     let journal: Journal?
     let onSave: (String, String) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @State private var title: String
-    @State private var text: String
+    @State private var title = ""
+    @State private var text = ""
     @State private var showDiscardDialog = false
 
-    init(journal: Journal?, onSave: @escaping (String, String) -> Void) {
-        self.journal = journal
-        self.onSave = onSave
-        _title = State(initialValue: journal?.title ?? "")
-        _text = State(initialValue: journal?.text ?? "")
-    }
-
-    // هل المستخدم غيّر شي؟
+    // Did the user change anything?
     private var hasChanges: Bool {
         title != (journal?.title ?? "") || text != (journal?.text ?? "")
     }
 
-    // ما نسمح بالحفظ بدون عنوان
+    // Saving needs a title
     private var canSave: Bool {
         !title.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 8) {
-                TextField("Title", text: $title)
-                    .font(.system(size: 34, weight: .bold))
-                    .foregroundStyle(.white)
+            ScrollView {
+                VStack(alignment: .leading) {
+                    TextField("Title", text: $title)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
 
-                Text((journal?.date ?? Date()).formatted(date: .numeric, time: .omitted))
-                    .font(.system(size: 14))
-                    .foregroundStyle(Color.textSecondary)
+                    Text((journal?.date ?? Date()).formatted(date: .numeric, time: .omitted))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
 
-                TextEditor(text: $text)
-                    .scrollContentBackground(.hidden)
-                    .foregroundStyle(.white)
-                    .overlay(alignment: .topLeading) {
-                        if text.isEmpty {
-                            Text("Type your Journal...")
-                                .foregroundStyle(Color.textSecondary)
-                                .padding(.top, 8)
-                                .padding(.leading, 5)
-                                .allowsHitTesting(false)
-                        }
-                    }
+                    TextField("Type your Journal...", text: $text, axis: .vertical)
+                        .font(.body)
+                }
+                .padding()
             }
-            .padding()
-            .background(Color.cardSurface.ignoresSafeArea())
             .scrollDismissesKeyboard(.interactively)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                // Close button
+                ToolbarItem(placement: .cancellationAction) {
                     Button {
                         if hasChanges {
                             showDiscardDialog = true
@@ -63,16 +48,17 @@ struct JournalEditorView: View {
                             dismiss()
                         }
                     } label: {
-                        Image(systemName: "xmark")
+                        Label("Close", systemImage: "xmark")
                     }
                 }
-                ToolbarItem(placement: .topBarTrailing) {
+
+                // Save button
+                ToolbarItem(placement: .confirmationAction) {
                     Button {
                         onSave(title, text)
                         dismiss()
                     } label: {
-                        Image(systemName: "checkmark")
-                            .foregroundStyle(Color.accentPrimary)
+                        Label("Save", systemImage: "checkmark")
                     }
                     .disabled(!canSave)
                 }
@@ -87,10 +73,20 @@ struct JournalEditorView: View {
             }
         }
         .interactiveDismissDisabled(hasChanges)
+        .onAppear {
+            // Fill the fields when editing an existing journal
+            title = journal?.title ?? ""
+            text = journal?.text ?? ""
+        }
     }
 }
 
-#Preview {
+#Preview("Dark") {
     JournalEditorView(journal: nil) { _, _ in }
         .preferredColorScheme(.dark)
+}
+
+#Preview("Light") {
+    JournalEditorView(journal: nil) { _, _ in }
+        .preferredColorScheme(.light)
 }

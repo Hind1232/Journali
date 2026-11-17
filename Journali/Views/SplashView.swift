@@ -5,16 +5,15 @@ struct SplashView: View {
     @State private var scale = 0.8
 
     var body: some View {
+        // If the content does not fit (big text), show it in a ScrollView
         ViewThatFits(in: .vertical) {
             content
-
-            ScrollView {
-                content
-            }
+            ScrollView { content }
         }
         .scaleEffect(scale)
         .opacity(opacity)
         .onAppear {
+            // Fade in and grow smoothly
             withAnimation(.easeOut(duration: 1.0)) {
                 opacity = 1.0
                 scale = 1.0
@@ -40,13 +39,10 @@ struct SplashView: View {
     }
 }
 
-#Preview {
-    SplashView()
-        .preferredColorScheme(.dark)
+#Preview("Dark") {
+    SplashView().preferredColorScheme(.dark)
 }
 
-#Preview("Large text") {
-    SplashView()
-        .environment(\.dynamicTypeSize, .accessibility3)
-        .preferredColorScheme(.dark)
+#Preview("Light") {
+    SplashView().preferredColorScheme(.light)
 }

@@ -1,16 +1,17 @@
 import SwiftUI
 import Combine
 
-// VIEWMODEL: المنطق (إضافة، تعديل، حذف، بحث، ترتيب)
+// Holds all the journals and the logic (add, edit, delete, search, sort)
 class JournalViewModel: ObservableObject {
     @Published var journals: [Journal] = []
     @Published var searchText = ""
     @Published var sortByBookmark = false
 
-    // القائمة اللي تنعرض بعد البحث والترتيب
+    // The list the screen shows (after search and sort)
     var displayedJournals: [Journal] {
         var result = journals
 
+        // Search: keep journals that contain the typed word
         if !searchText.isEmpty {
             result = result.filter {
                 $0.title.localizedCaseInsensitiveContains(searchText) ||
@@ -18,6 +19,7 @@ class JournalViewModel: ObservableObject {
             }
         }
 
+        // Sort: bookmarked first (if chosen), otherwise newest first
         result.sort { a, b in
             if sortByBookmark, a.isBookmarked != b.isBookmarked {
                 return a.isBookmarked

@@ -1,23 +1,18 @@
 import SwiftUI
 
-// يعرض الـ Splash ثم ينتقل للصفحة الرئيسية بعد ثانيتين
+// Shows the splash for 2 seconds, then the main screen
 struct RootView: View {
     @State private var showSplash = true
 
     var body: some View {
-        ZStack {
-            if showSplash {
-                SplashView()
-                    .transition(.opacity)
-            } else {
-                MainView()
-                    .transition(.opacity)
-            }
-        }
-        .preferredColorScheme(.dark)
-        .task {
-            try? await Task.sleep(for: .seconds(2))
-            withAnimation { showSplash = false }
+        if showSplash {
+            SplashView()
+                .task {
+                    try? await Task.sleep(for: .seconds(2))
+                    withAnimation { showSplash = false }
+                }
+        } else {
+            MainView()
         }
     }
 }

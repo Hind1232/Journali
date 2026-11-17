@@ -10,9 +10,8 @@ struct MainView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color.black.ignoresSafeArea()
-
+            Group {
+                // No journals: empty state. Otherwise: the list.
                 if viewModel.journals.isEmpty {
                     EmptyStateView()
                 } else {
@@ -22,36 +21,36 @@ struct MainView: View {
             .navigationTitle("Journal")
             .toolbar {
                 ToolbarItemGroup(placement: .topBarTrailing) {
-                    // قائمة الترتيب
+                    // Sort menu
                     Menu {
                         Button("Sort by Bookmark") { viewModel.sortByBookmark = true }
                         Button("Sort by Entry Date") { viewModel.sortByBookmark = false }
                     } label: {
-                        Image(systemName: "line.3.horizontal.decrease")
+                        Label("Sort", systemImage: "line.3.horizontal.decrease")
                     }
 
-                    // زر الإضافة
+                    // Add button
                     Button {
                         showNewJournal = true
                     } label: {
-                        Image(systemName: "plus")
+                        Label("Add", systemImage: "plus")
                     }
                 }
             }
             .searchable(text: $viewModel.searchText)
-            // شاشة يومية جديدة
+            // New journal screen
             .sheet(isPresented: $showNewJournal) {
                 JournalEditorView(journal: nil) { title, text in
                     viewModel.add(title: title, text: text)
                 }
             }
-            // شاشة تعديل يومية
+            // Edit journal screen
             .sheet(item: $journalToEdit) { journal in
                 JournalEditorView(journal: journal) { title, text in
                     viewModel.update(journal, title: title, text: text)
                 }
             }
-            // تنبيه الحذف
+            // Delete confirmation
             .alert("Delete Journal?", isPresented: $showDeleteAlert) {
                 Button("Cancel", role: .cancel) { }
                 Button("Delete", role: .destructive) {
@@ -65,33 +64,34 @@ struct MainView: View {
         }
     }
 
+    // The list of cards
     private var journalList: some View {
         List {
             ForEach(viewModel.displayedJournals) { journal in
-                JournalCard(journal: journal) {
-                    viewModel.toggleBookmark(journal)
-                }
-                .onTapGesture { journalToEdit = journal }
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
-                // السحب لليمين للحذف
-                .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                    Button {
-                        journalToDelete = journal
-                        showDeleteAlert = true
-                    } label: {
-                        Image(systemName: "trash.fill")
+                Section {
+                    JournalCard(journal: journal) {
+                        viewModel.toggleBookmark(journal)
                     }
-                    .tint(Color.destructive)
+                    .contentShape(Rectangle())            // the whole card is tappable
+                    .onTapGesture { journalToEdit = journal }
+                    .swipeActions(edge: .leading) {       // swipe right to delete
+                        Button(role: .destructive) {
+                            journalToDelete = journal
+                            showDeleteAlert = true
+                        } label: {
+                            Label("Delete", systemImage: "trash.fill")
+                        }
+                    }
                 }
             }
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
     }
 }
 
-#Preview {
-    MainView()
-        .preferredColorScheme(.dark)
+#Preview("Dark") {
+    MainView().preferredColorScheme(.dark)
+}
+
+#Preview("Light") {
+    MainView().preferredColorScheme(.light)
 }
