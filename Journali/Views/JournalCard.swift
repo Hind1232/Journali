@@ -1,5 +1,8 @@
 import SwiftUI
 
+// The palette from the design
+
+
 struct JournalCard: View {
     let journal: Journal
     let onBookmark: () -> Void
@@ -10,33 +13,27 @@ struct JournalCard: View {
                 Text(journal.title)
                     .font(.title3)
                     .fontWeight(.semibold)
-                    .foregroundStyle(Color("AccentText"))
+                    .foregroundStyle(AppColor.title)
 
                 Spacer()
 
                 Button(action: onBookmark) {
                     Image(systemName: journal.isBookmarked ? "bookmark.fill" : "bookmark")
+                        .foregroundStyle(AppColor.title)
                 }
                 .buttonStyle(.borderless)
             }
 
             Text(journal.date.formatted(date: .numeric, time: .omitted))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(AppColor.secondaryText)
 
             Text(journal.text)
                 .font(.footnote)
-                .lineLimit(4)
+                .foregroundStyle(.primary)
+                .lineLimit(5)
         }
+        .padding()
+        .background(Color(white: 0.11), in: .rect(cornerRadius: 20))
     }
-}
-
-#Preview {
-    List {
-        JournalCard(
-            journal: Journal(title: "Great Day", text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."),
-            onBookmark: { }
-        )
-    }
-    .preferredColorScheme(.dark)
 }

@@ -95,3 +95,4 @@ struct MainView: View {
 #Preview("Light") {
     MainView().preferredColorScheme(.light)
 }
+

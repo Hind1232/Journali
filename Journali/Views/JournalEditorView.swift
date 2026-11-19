@@ -1,6 +1,5 @@
 import SwiftUI
 
-// One screen for both: a new journal (journal is nil) or editing one
 struct JournalEditorView: View {
     let journal: Journal?
     let onSave: (String, String) -> Void
@@ -10,12 +9,10 @@ struct JournalEditorView: View {
     @State private var text = ""
     @State private var showDiscardDialog = false
 
-    // Did the user change anything?
     private var hasChanges: Bool {
         title != (journal?.title ?? "") || text != (journal?.text ?? "")
     }
 
-    // Saving needs a title
     private var canSave: Bool {
         !title.trimmingCharacters(in: .whitespaces).isEmpty
     }
@@ -39,7 +36,6 @@ struct JournalEditorView: View {
             }
             .scrollDismissesKeyboard(.interactively)
             .toolbar {
-                // Close button
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
                         if hasChanges {
@@ -52,7 +48,6 @@ struct JournalEditorView: View {
                     }
                 }
 
-                // Save button
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
                         onSave(title, text)
@@ -74,19 +69,13 @@ struct JournalEditorView: View {
         }
         .interactiveDismissDisabled(hasChanges)
         .onAppear {
-            // Fill the fields when editing an existing journal
             title = journal?.title ?? ""
             text = journal?.text ?? ""
         }
     }
 }
 
-#Preview("Dark") {
+#Preview {
     JournalEditorView(journal: nil) { _, _ in }
         .preferredColorScheme(.dark)
-}
-
-#Preview("Light") {
-    JournalEditorView(journal: nil) { _, _ in }
-        .preferredColorScheme(.light)
 }

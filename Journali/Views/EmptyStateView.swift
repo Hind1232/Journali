@@ -11,7 +11,7 @@ struct EmptyStateView: View {
             Text("Begin Your Journal")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundStyle(Color("AccentText"))
+                .foregroundStyle(Color(red: 0.686, green: 0.6, blue: 0.992))
 
             Text("Craft your personal diary, tap the plus icon to begin")
                 .font(.body)
@@ -21,6 +21,7 @@ struct EmptyStateView: View {
         }
     }
 }
+
 
 #Preview("Dark") {
     EmptyStateView().preferredColorScheme(.dark)
